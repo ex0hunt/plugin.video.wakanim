@@ -16,11 +16,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
+import sys
 import json
-try:
-    from urllib import unquote, urlencode
-except ImportError:
-    from urllib.parse import unquote, urlencode
+
+PY3 = sys.version_info.major >= 3
+if PY3:
+    from urllib.parse import urlencode
+else:
+    from urllib import urlencode
 
 import xbmc
 import xbmcgui
@@ -125,7 +128,7 @@ def get_stream_params_from_json(data):
         drm = drm[u'widevine']
     else:
         # if no 'widewine' get first license type from drm list
-        result['drm'], drm = next(iter(drm.items()))
+        result['drm'], drm = next(iter(list(drm.items())))
         result['drm'] = enc(result['drm'])
     result['key'] = enc(drm[u'url'])
     result['headers'] = {enc(h[u'name']): enc(h[u'value']) for h in drm.get(u'headers', [])}

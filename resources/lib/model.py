@@ -16,11 +16,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-try:
+
+PY3 = sys.version_info.major >= 3
+if PY3:
+    from urllib.parse import parse_qs, unquote_plus
+else:
     from urlparse import parse_qs
     from urllib import unquote_plus
-except ImportError:
-    from urllib.parse import parse_qs, unquote_plus
 
 
 def parse(argv):
@@ -49,6 +51,6 @@ class Args(object):
         self._addonid   = sys.modules["__main__"]._plugId
         self._cj        = None
 
-        for key, value in kwargs.items():
+        for key, value in list(kwargs.items()):
             if value:
                 setattr(self, key, unquote_plus(value[0]))
